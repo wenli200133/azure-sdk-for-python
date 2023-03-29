@@ -17,6 +17,7 @@ from ._generated.models import (
     TagAttributesBase,
     ManifestWriteableProperties,
     ManifestAttributesBase,
+    ManifestAttributesManifest,
 )
 from ._helpers import _host_only, _is_tag, _strip_alg
 
@@ -76,6 +77,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     """
 
     def __init__(self, **kwargs):
+        self._related_artifacts = kwargs.get("related_artifacts", None)
         self._architecture = kwargs.get("cpu_architecture", None)
         if self._architecture is not None:
             self._architecture = ArtifactArchitecture(self._architecture)
@@ -104,6 +106,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             operating_system=generated.operating_system,
             size_in_bytes=generated.size,
             tags=generated.tags,
+            related_artifacts=None if generated.related_artifacts is None else generated.related_artifacts,
             can_delete=None if generated.changeable_attributes is None else generated.changeable_attributes.can_delete,
             can_read=None if generated.changeable_attributes is None else generated.changeable_attributes.can_read,
             can_write=None if generated.changeable_attributes is None else generated.changeable_attributes.can_write,
@@ -119,6 +122,10 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             can_write=self.can_write,
             can_list=self.can_list,
         )
+
+    @property
+    def related_artifacts(self) -> List[ManifestAttributesManifest]:
+        return self._related_artifacts
 
     @property
     def architecture(self) -> ArtifactArchitecture:
